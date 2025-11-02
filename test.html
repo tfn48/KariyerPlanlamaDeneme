@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025-2026 Kariyer Planlama Çalışma Modeli</title>
+    <!-- Chosen Palette: Warm Neutral (Gray/White) with Professional Blue -->
+    <!-- Application Structure Plan: Kullanıcı rolüne (Genç, Firma, Gönüllü) dayalı bir SPA navigasyonu tasarlandı. Üst navigasyon barı ('Ana Sayfa', 'Gençler İçin', 'Firmalar İçin', 'Modelin Yapısı'), kullanıcıların (öğrenciler, firmalar, gönüllüler) kendileriyle ilgili içeriğe doğrudan erişmelerini sağlar. Bu, doğrusal bir rapor yapısından daha kullanışlıdır. JS, gezinme tıklamalarına göre içerik 'sayfalarını' (divler) gizleyecek/gösterecek. 'Modelin Yapısı' bölümü, farklı 'Uygulayıcıları' (aktörleri) sayfayı dağıtmadan detaylandırmak için JS destekli sekmeler kullanacak. -->
+    <!-- Visualization & Content Choices: 
+        1. Rapor Bilgisi: Genel süreç akışı (Gençler -> İK Takımı -> Platform -> Firmalar). Goal: Bilgilendir/Organize et. Viz/Yöntem: HTML/Tailwind Akış Şeması (Flexbox/Grid ve Unicode oklar). Etkileşim: Statik. Gerekçe: Süreç akışı, bu 'modeli' açıklamanın en iyi yoludur. HTML/Tailwind, "NO SVG/Mermaid" kuralına uymak için kullanıldı. Kütüphane: HTML/Tailwind.
+        2. Rapor Bilgisi: Rol tanımları (İK Takımı, Koordinatörler, Katalizörler). Goal: Organize et/Bilgilendir. Viz/Yöntem: İnteraktif Sekmeler (Tabs). Etkileşim: Bir sekmeye tıklamak, ilgili rolün açıklamasını göstermek için JS kullanır. Gerekçe: Sekmeler, üç farklı ama ilişkili rolü yığılma olmadan temiz bir şekilde sunar. Kütüphane: Vanilla JS.
+        3. Rapor Bilgisi: Firma/Paydaş beklentileri (İlan paylaşımı, KSS, Sponsorluk, Eğitim). Goal: Bilgilendir/Karşılaştır. Viz/Yöntem: Radar Grafiği (Chart.js). Etkileşim: Hover üzerine tooltip. Gerekçe: Radar grafiği, bir paydaş olmanın çok yönlü beklentilerini basit bir listeden daha etkili bir şekilde görselleştirir. Kütüphane: Chart.js (Canvas).
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .nav-button {
+            transition: all 0.3s ease;
+        }
+        .nav-button.active {
+            background-color: #2563EB; /* bg-blue-600 */
+            color: white;
+        }
+        .tab-button.active {
+            border-color: #2563EB; /* border-blue-600 */
+            color: #2563EB; /* text-blue-600 */
+            font-weight: 500;
+        }
+        .page-content, .tab-content {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 400px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav id="main-nav" class="container max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-center md:justify-between items-center">
+            <h1 class="text-xl font-bold text-blue-600 mb-2 md:mb-0">Kariyer Planlama Modeli</h1>
+            <div class="flex flex-wrap justify-center gap-2">
+                <button data-page="page-home" class="nav-button active text-sm md:text-base px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-gray-100">Ana Sayfa</button>
+                <button data-page="page-gencler" class="nav-button text-sm md:text-base px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-gray-100">Gençler İçin</button>
+                <button data-page="page-firmalar" class="nav-button text-sm md:text-base px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-gray-100">Firmalar İçin</button>
+                <button data-page="page-model" class="nav-button text-sm md:text-base px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-gray-100">Modelin Yapısı</button>
+                <button data-page="page-platform" class="nav-button text-sm md:text-base px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-gray-100">Platform: Cvyolla.com</button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="content-container" class="container max-w-6xl mx-auto p-4 md:p-8">
+
+        <!-- Page 1: Ana Sayfa -->
+        <section id="page-home" class="page-content">
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg text-center">
+                <h2 class="text-2xl md:text-3xl font-bold text-blue-600 mb-4">Geleceğe Köprü Kuruyoruz</h2>
+                <p class="text-base md:text-lg text-gray-600 max-w-3xl mx-auto mb-8">
+                    Bu çalışma modeli, ÇYDD'li gençlerimiz ve bursiyerlerimiz ile İzmir ve çevresindeki firmalar arasında somut bir kariyer köprüsü kurmayı amaçlar. Modelin nasıl çalıştığını, kimlerin rol aldığını ve bu ekosistemin size nasıl fayda sağlayabileceğini keşfedin.
+                </p>
+                
+                <!-- HTML/Tailwind Akış Şeması -->
+                <h3 class="text-xl font-semibold text-gray-900 mb-6">Modelin Ekosistemi</h3>
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-center">
+                    
+                    <!-- Gençler -->
+                    <div class="flex-1 bg-blue-50 p-4 rounded-lg border border-blue-200 w-full md:w-auto">
+                        <span class="text-4xl">🎓</span>
+                        <h4 class="font-bold text-blue-800">Gençler / Bursiyerler</h4>
+                        <p class="text-sm text-blue-700">İş ve staj arayan yetenek havuzu.</p>
+                    </div>
+                    
+                    <span class="text-3xl text-gray-400 transform rotate-90 md:rotate-0">→</span>
+                    
+                    <!-- Uygulayıcılar / Platform -->
+                    <div class="flex-1 bg-gray-50 p-4 rounded-lg border border-gray-200 w-full md:w-auto">
+                        <span class="text-4xl">🤝</span>
+                        <h4 class="font-bold text-gray-800">Uygulayıcılar & Platform</h4>
+                        <p class="text-sm text-gray-700">(İK Takımı, Koordinatörler, Cvyolla.com)</p>
+                        <p class="text-sm text-gray-600 mt-2">İlanları toplar, CV'leri yönlendirir, süreci yönetir.</p>
+                    </div>
+                    
+                    <span class="text-3xl text-gray-400 transform rotate-90 md:rotate-0">→</span>
+                    
+                    <!-- Firmalar -->
+                    <div class="flex-1 bg-green-50 p-4 rounded-lg border border-green-200 w-full md:w-auto">
+                        <span class="text-4xl">🏢</span>
+                        <h4 class="font-bold text-green-800">Firmalar & Paydaşlar</h4>
+                        <p class="text-sm text-green-700">İlan paylaşır, yetenekleri keşfeder, KSS ortaklığı yapar.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page 2: Gençler İçin -->
+        <section id="page-gencler" class="page-content hidden">
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl md:text-3xl font-bold text-blue-600 mb-4">Gençler & Bursiyerler İçin Fırsatlar</h2>
+                <p class="text-base md:text-lg text-gray-600 mb-8">
+                    Bu model, kariyer yolculuğunuzun başlangıcında size rehberlik etmek, doğru fırsatları bulmanızı sağlamak ve iş dünyasına hazırlanmanıza yardımcı olmak için tasarlanmıştır.
+                </p>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-gray-50 p-6 rounded-lg border">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Sizin İçin Ne Yapıyoruz?</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>İş ve staj ilanlarını aktif olarak tarar ve size özel bir grupta paylaşırız.</li>
+                            <li>Başvurularınızı (CV vb.) doğrudan iletişimde olduğumuz firma yetkililerine iletiriz.</li>
+                            <li>Staj ve iş arama süreçlerinizde sizi bilgilendirir ve yönlendiririz.</li>
+                            <li>Kariyerinize yönelik ihtiyaçlarınıza göre eğitimler planlarız.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-lg border">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Süreç Nasıl İşliyor?</h3>
+                        <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                            <li>İK Takımımızın paylaştığı ilanları takip edin.</li>
+                            <li>İlgilendiğiniz ilanlara başvurun.</li>
+                            <li>İK Takımı, bilgilerinizi toplayarak ilgili firmaya iletecek.</li>
+                            <li>Ayrıca Cvyolla.com platformuna kaydolarak profilinizi oluşturun.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page 3: Firmalar İçin -->
+        <section id="page-firmalar" class="page-content hidden">
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl md:text-3xl font-bold text-green-600 mb-4">Firmalar & Paydaşlar İçin Değer</h2>
+                <p class="text-base md:text-lg text-gray-600 mb-8">
+                    Modelimiz, kurumunuzun nitelikli ve motive genç yeteneklere ulaşması, sosyal sorumluluk hedeflerinizi gerçekleştirmesi ve sektörle olan bağlarınızı güçlendirmesi için bir platform sunar.
+                </p>
+                <div class="grid md:grid-cols-2 gap-6 items-start">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Neden Paydaş Olmalısınız?</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>Motive ve yetenekli ÇYDD genç/bursiyer havuzuna doğrudan erişim.</li>
+                            <li>İş ve stajyer ilanlarınızı hedefli bir kitleye duyurma imkanı.</li>
+                            <li>Sosyal sorumluluk projelerinde (KSS) güçlü bir ortaklık.</li>
+                            <li>Pazarlama, sponsorluk ve eğitim alanlarında iş birliği fırsatları.</li>
+                            <li>Derneğimizin "Katalizörler" ağı aracılığıyla kolaylaştırılmış iletişim.</li>
+                        </ul>
+                         <h3 class="text-xl font-semibold text-gray-900 mt-6 mb-3">Sizden Beklentilerimiz</h3>
+                         <p class="text-gray-700">
+                            Paydaşlarımızdan temel beklentimiz, açık iş ve staj fırsatlarını İK takımımızla paylaşmaları ve Cvyolla.com platformunu aktif kullanmalarıdır. Ayrıca, KSS projeleri, eğitimler veya sponsorluk gibi konularda ortak çalışmalara açık olmanız, bu ekosistemin gücünü artıracaktır.
+                         </p>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3 text-center">Paydaşlık Alanları (Radar Grafik)</h3>
+                        <p class="text-sm text-gray-600 text-center mb-4">
+                            İş birliğimizin çok yönlü doğasını gösteren örnek bir dağılım.
+                        </p>
+                        <div class="chart-container">
+                            <canvas id="stakeholderChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page 4: Modelin Yapısı (Uygulayıcılar) -->
+        <section id="page-model" class="page-content hidden">
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Modelin Yapısı: Uygulayıcılar</h2>
+                <p class="text-base md:text-lg text-gray-600 mb-8">
+                    Bu model, tamamı gönüllülük esasına dayalı, farklı sorumluluklara sahip ekiplerin koordinasyonu ile çalışır. İşte projenin mimarları:
+                </p>
+
+                <!-- Tab Buttons -->
+                <div class="border-b border-gray-200 mb-6">
+                    <nav id="model-tabs" class="flex flex-wrap -mb-px gap-4">
+                        <button data-tab="tab-ik-takimi" class="tab-button active text-base md:text-lg px-1 py-3 border-b-2 border-transparent hover:border-gray-300">İK Takımı</button>
+                        <button data-tab="tab-koordinatorler" class="tab-button text-base md:text-lg px-1 py-3 border-b-2 border-transparent hover:border-gray-300">Koordinatörler & İK Uzmanları</button>
+                        <button data-tab="tab-katalizorler" class="tab-button text-base md:text-lg px-1 py-3 border-b-2 border-transparent hover:border-gray-300">Katalizörler</button>
+                    </nav>
+                </div>
+
+                <!-- Tab Content -->
+                <div id="tab-content-container">
+                    <!-- İK Takımı -->
+                    <div id="tab-ik-takimi" class="tab-content">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">İK Takımı (4-7 Kişi)</h3>
+                        <p class="text-gray-700 mb-4">Gençlerden oluşan bu dinamik ekip, modelin sahadaki uygulayıcısıdır. 1-2 İK uzmanından danışmanlık alırlar.</p>
+                        <h4 class="font-semibold text-gray-700">Temel Görevleri:</h4>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700 mt-2">
+                            <li>İzmir ve çevresindeki firmalarla aktif iletişim kurmak.</li>
+                            <li>Açık iş/staj ilanlarını tarayıp ÇYDD grubunda paylaşmak.</li>
+                            <li>İlanlara başvuran gençlerin bilgilerini (CV vb.) toplayıp ilgili firmalara iletmek.</li>
+                            <li>Staj ve iş arayanların bilgilerini toplamak, bilgilendirme postları hazırlamak.</li>
+                            <li>Firmaların Cvyolla.com platformunu kullanımını teşvik etmek.</li>
+                        </ul>
+                    </div>
+                    <!-- Koordinatörler & İK Uzmanları -->
+                    <div id="tab-koordinatorler" class="tab-content hidden">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Proje Koordinatörleri & İK Uzmanları</h3>
+                        <p class="text-gray-700 mb-4">Gençler, mezunlar ve/veya gönüllülerden oluşan bu ekip, projenin stratejisini belirler ve genel yönetimini sağlar.</p>
+                        <h4 class="font-semibold text-gray-700">Temel Görevleri:</h4>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700 mt-2">
+                            <li>Projeyi uçtan uca yönetmek ve süreci sürekli iyileştirmek.</li>
+                            <li>İK Takımı'nı denetlemek ve onlarla ayda bir toplantı yapmak.</li>
+                            <li>Katalizörler ve Paydaşlar ile iletişimi sürdürmek.</li>
+                            <li>İhtiyaca yönelik eğitimler planlamak.</li>
+                            <li>Projeyi meslek odaları ve sanayi birliklerine tanıtmak.</li>
+                        </ul>
+                    </div>
+                    <!-- Katalizörler -->
+                    <div id="tab-katalizorler" class="tab-content hidden">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Katalizörler</h3>
+                        <p class="text-gray-700 mb-4">İş dünyasında geniş bir çevreye sahip olan, tecrübeli dernek gönüllüleridir. Modelin büyümesinde kritik bir rol oynarlar.</p>
+                        <h4 class="font-semibold text-gray-700">Temel Görevleri:</h4>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700 mt-2">
+                            <li>Firmalar ile dernek arasında daha kolay ve etkili bir iletişim kurulması için referans olmak.</li>
+                            <li>Yeni firmaların paydaşımız haline gelmesi sürecinde destek sağlamak.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page 5: Platform -->
+        <section id="page-platform" class="page-content hidden">
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg text-center">
+                <span class="text-5xl">🌐</span>
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-900 my-4">Platform: Cvyolla.com</h2>
+                <p class="text-base md:text-lg text-gray-600 max-w-3xl mx-auto mb-8">
+                    Cvyolla.com, bu modelin dijital kalbidir. İş ve/veya staj arayan ÇYDD'li gençler ile çalışan/stajyer arayan firmaları buluşturan merkezi platformumuzdur. İK Takımı, firmaları bu platformu kullanmaya teşvik ederek sürecin daha verimli ve ölçeklenebilir olmasını sağlar.
+                </p>
+                <a href="#" class="inline-block bg-blue-600 text-white font-medium px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition-colors">
+                    Platformu Ziyaret Et (Demo)
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center py-6 mt-8 border-t border-gray-200">
+        <p class="text-sm text-gray-500">&copy; 2025 ÇYDD Kariyer Planlama Modeli</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navButtons = document.querySelectorAll('.nav-button');
+            const pages = document.querySelectorAll('.page-content');
+            
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            function showPage(pageId) {
+                pages.forEach(page => page.classList.add('hidden'));
+                const activePage = document.getElementById(pageId);
+                if (activePage) {
+                    activePage.classList.remove('hidden');
+                }
+                
+                navButtons.forEach(button => button.classList.remove('active'));
+                const activeButton = document.querySelector(`.nav-button[data-page="${pageId}"]`);
+                if (activeButton) {
+                    activeButton.classList.add('active');
+                }
+            }
+
+            function showTab(tabId) {
+                tabContents.forEach(tab => tab.classList.add('hidden'));
+                const activeTab = document.getElementById(tabId);
+                if (activeTab) {
+                    activeTab.classList.remove('hidden');
+                }
+                
+                tabButtons.forEach(button => button.classList.remove('active'));
+                const activeButton = document.querySelector(`.tab-button[data-tab="${tabId}"]`);
+                if (activeButton) {
+                    activeButton.classList.add('active');
+                }
+            }
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    showPage(button.dataset.page);
+                });
+            });
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    showTab(button.dataset.tab);
+                });
+            });
+
+            showPage('page-home');
+            showTab('tab-ik-takimi');
+
+            const ctx = document.getElementById('stakeholderChart');
+            if (ctx) {
+                new Chart(ctx.getContext('2d'), {
+                    type: 'radar',
+                    data: {
+                        labels: [
+                            'İlan Paylaşımı', 
+                            'Sosyal Sorumluluk', 
+                            'Pazarlama/Sponsorluk', 
+                            'Eğitim/Gezi', 
+                            'Mentorluk'
+                        ],
+                        datasets: [{
+                            label: 'Paydaşlık Alanları',
+                            data: [9, 7, 5, 6, 8],
+                            fill: true,
+                            backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                            borderColor: 'rgb(22, 163, 74)',
+                            pointBackgroundColor: 'rgb(22, 163, 74)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgb(22, 163, 74)'
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.r !== null) {
+                                            label += context.parsed.r + ' (Önem Düzeyi)';
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            r: {
+                                angleLines: {
+                                    color: 'rgba(0, 0, 0, 0.1)'
+                                },
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.1)'
+                                },
+                                pointLabels: {
+                                    font: {
+                                        size: 13
+                                    },
+                                    color: '#333'
+                                },
+                                ticks: {
+                                    beginAtZero: true,
+                                    max: 10,
+                                    stepSize: 2,
+                                    backdropColor: 'rgba(0, 0, 0, 0)',
+                                    color: '#555'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
